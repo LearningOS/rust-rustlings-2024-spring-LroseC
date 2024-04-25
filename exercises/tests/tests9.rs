@@ -29,6 +29,7 @@
 
 extern "Rust" {
     fn my_demo_function(a: u32) -> u32;
+	#[link_name="my_demo_function"]
     fn my_demo_function_alias(a: u32) -> u32;
 }
 
@@ -52,7 +53,6 @@ mod tests {
         //
         // SAFETY: We know those functions are aliases of a safe
         // Rust function.
-		let my_demo_function_alias = my_demo_function;
         unsafe {
             my_demo_function(123);
             my_demo_function_alias(456);

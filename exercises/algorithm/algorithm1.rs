@@ -2,8 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
-
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
@@ -59,7 +57,6 @@ impl<T> LinkedList<T> {
     pub fn get(&mut self, index: i32) -> Option<&T> {
         self.get_ith_node(self.start, index)
     }
-
     fn get_ith_node(&mut self, node: Option<NonNull<Node<T>>>, index: i32) -> Option<&T> {
         match node {
             None => None,
@@ -69,14 +66,47 @@ impl<T> LinkedList<T> {
             },
         }
     }
+	/*
+	fn pop(&mut self) -> Option<T> {
+		let ptr = self.start?;
+		self.start = unsafe { (*ptr.as_ptr()).next };
+		self.length -= 1;
+		unsafe { Some((*ptr.as_ptr()).val) }
+	}
+	*/
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	where
+		T: std::cmp::PartialOrd + std::marker::Copy
 	{
 		//TODO
-		Self {
+		//merge sort
+		let mut slf = Self {
             length: 0,
             start: None,
             end: None,
-        }
+        };
+		let mut ptr_a = list_a.start;
+		let mut ptr_b = list_b.start;
+		while let(Some(a), Some(b)) = (ptr_a, ptr_b) {
+			let va = unsafe { (*a.as_ptr()).val };
+			let vb = unsafe { (*b.as_ptr()).val };
+			if va < vb {
+				slf.add(va);
+				ptr_a = unsafe { (*a.as_ptr()).next };
+			} else {
+				slf.add(vb);
+				ptr_b = unsafe { (*b.as_ptr()).next };
+			}
+		}
+		while let Some(a) = ptr_a {
+			slf.add(unsafe { (*a.as_ptr()).val });
+			ptr_a = unsafe { (*a.as_ptr()).next };
+		}
+		while let Some(b) = ptr_b {
+			slf.add(unsafe { (*b.as_ptr()).val });
+			ptr_b = unsafe { (*b.as_ptr()).next };
+		}
+		slf
 	}
 }
 

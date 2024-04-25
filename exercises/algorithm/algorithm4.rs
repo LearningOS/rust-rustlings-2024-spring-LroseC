@@ -37,6 +37,37 @@ where
             right: None,
         }
     }
+	pub fn insert_node(u: Option<Box<Self>>, value: T) -> Option<Box<Self>> {
+		match u {
+			None => {
+				Some(Box::new(Self::new(value)))
+			},
+			Some(mut u) => {
+				if value < u.value {
+					u.left = Self::insert_node(u.left, value);
+				} else {
+					u.right = Self::insert_node(u.right, value);
+				}
+				Some(u)
+			}
+		}
+	}
+	pub fn search_node(u: &Option<Box<Self>>, value: T) -> bool {
+		match u {
+			None => {
+				false
+			},
+			Some(u) => {
+				if value == u.value {
+					true
+				} else if value < u.value {
+					Self::search_node(&u.left, value)
+				} else {
+					Self::search_node(&u.right, value)
+				}
+			}
+		}
+	}
 }
 
 impl<T> BinarySearchTree<T>
@@ -51,12 +82,19 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
+		self.root = TreeNode::insert_node(self.root, value);
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
-        //TODO
-        true
+		match self.root {
+			None => {
+				false
+			},
+			Some(u) => {
+				TreeNode::search_node(&self.root, value)
+			}
+		}
     }
 }
 
