@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -38,6 +37,14 @@ where
 
     pub fn add(&mut self, value: T) {
         //TODO
+		self.count += 1;
+		let mut pos = self.count;
+		self.items.push(value);
+		while pos != 1 && (self.comparator)(&self.items[pos], &self.items[self.parent_idx(pos)]) {
+			let par = self.parent_idx(pos);
+			self.items.swap(pos, par);
+			pos = self.parent_idx(pos);
+		}
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -57,8 +64,7 @@ where
     }
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+		self.left_child_idx(idx)
     }
 }
 
@@ -84,8 +90,31 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+		if self.is_empty() {
+			return None;
+		}
+		self.items.swap(1, self.count);
+		self.count -= 1;
+		let mut pos: usize = 1;
+		loop {
+			if self.smallest_child_idx(pos) >= self.count {
+				break;
+			}
+			let mut small_son = self.left_child_idx(pos);
+			let right_son = self.right_child_idx(pos);
+			if right_son < self.count {
+				if (self.comparator)(&self.items[small_son], &self.items[right_son]) {
+					small_son = right_son;
+				}
+			}
+			if (self.comparator)(&self.items[small_son], &self.items[pos]) {
+				self.items.swap(pos, small_son);
+				pos = small_son;
+			} else {
+				break;
+			}
+		}
+		self.items.pop()
     }
 }
 
