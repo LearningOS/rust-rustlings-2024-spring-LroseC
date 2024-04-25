@@ -3,7 +3,6 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
 
@@ -37,37 +36,6 @@ where
             right: None,
         }
     }
-	pub fn insert_node(u: Option<Box<Self>>, value: T) -> Option<Box<Self>> {
-		match u {
-			None => {
-				Some(Box::new(Self::new(value)))
-			},
-			Some(mut u) => {
-				if value < u.value {
-					u.left = Self::insert_node(u.left, value);
-				} else {
-					u.right = Self::insert_node(u.right, value);
-				}
-				Some(u)
-			}
-		}
-	}
-	pub fn search_node(u: &Option<Box<Self>>, value: T) -> bool {
-		match u {
-			None => {
-				false
-			},
-			Some(u) => {
-				if value == u.value {
-					true
-				} else if value < u.value {
-					Self::search_node(&u.left, value)
-				} else {
-					Self::search_node(&u.right, value)
-				}
-			}
-		}
-	}
 }
 
 impl<T> BinarySearchTree<T>
@@ -82,19 +50,32 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
-		self.root = TreeNode::insert_node(self.root, value);
+		match &mut self.root {
+			None => {
+				self.root = Some(Box::new(TreeNode::new(value)));
+			},
+			Some(ptr) => {
+				ptr.insert(value);
+			}
+		}
     }
 
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
-		match self.root {
-			None => {
-				false
-			},
-			Some(u) => {
-				TreeNode::search_node(&self.root, value)
+		if self.root.is_none() {
+			return false;
+		}
+		let mut tmp = &self.root;
+		while let Some(ptr) = tmp {
+			if value == ptr.value {
+				return true;
+			} else if value < ptr.value {
+				tmp = &ptr.left;
+			} else {
+				tmp = &ptr.right;
 			}
 		}
+		false
     }
 }
 
@@ -105,6 +86,28 @@ where
     // Insert a node into the tree
     fn insert(&mut self, value: T) {
         //TODO
+		if value == self.value {
+			return;
+		}
+		else if value < self.value {
+			match &mut self.left {
+				None => {
+					self.left = Some(Box::new(Self::new(value)));
+				},
+				Some(left) => {
+					left.insert(value);
+				}
+			}
+		} else {
+			match &mut self.right {
+				None => {
+					self.right = Some(Box::new(Self::new(value)));
+				},
+				Some(right) => {
+					right.insert(value);
+				}
+			}
+		}
     }
 }
 
