@@ -40,10 +40,51 @@ impl Default for Person {
 // If while parsing the age, something goes wrong, then return the default of
 // Person Otherwise, then return an instantiated Person object with the results
 
-// I AM NOT DONE
+/*
+impl Person {
+	fn to_num(s: &str) -> Option<usize> {
+		let res: i32 = 0;
+		for ch in s.chars() {
+			if !ch.is_ascii_digit() {
+				return None;
+			}
+			res = res * 10 + (ch as i32 - '0' as i32);
+		}
+		Some(res as usize)
+	}
+	fn fry_split(s: &str) -> Option<(String, String)> {
+		let l = s.len();
+		for i in 1..l - 1 {
+			if s.get(i) == ',' {
+				return Some((s[0..i - 1].to_string(), s[i + 1..l - 1].to_string()));
+			}
+		}
+		None
+	}
+	fn try_con(s: &str) -> Option<Person> {
+		let (x, y) = try_split(&s)?;
+		Some(Person { name: x, age: Self::to_num(y)? })
+	}
+}
+*/
 
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+		match s.split_once(',') {
+			Some((x, y)) => {
+				if let Ok(z) = y.parse() {
+					if x.len() == 0 {
+						return Person::default();
+					}
+					Person { name: x.to_string(), age: z }
+				} else {
+					Person::default()
+				}
+			},
+			None => {
+				Person::default()
+			}
+		}
     }
 }
 
